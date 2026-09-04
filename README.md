@@ -9,7 +9,8 @@ Celebrio is a thoughtful card-making experience for the moments that deserve mor
 - Optional photo upload with an in-card preview
 - Six colour palettes, envelope seals, decorative details, and handwritten-style quote notes
 - A live card preview while you edit
-- Native sharing where supported, with clipboard fallback in other browsers
+- Supabase-backed card saving with a shareable link
+- Native link sharing where supported, with clipboard fallback in other browsers
 
 ## Getting Started
 
@@ -29,6 +30,17 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser. The card studio is available at [http://localhost:3000/create](http://localhost:3000/create).
 
+### Supabase configuration
+
+Create a `.env.local` file with the public Supabase project values:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+```
+
+The app expects a `cards` table containing the fields used by the card studio, including `slug`, `occasion`, `recipient_name`, `salutation`, `relationship`, `heading`, `message`, `photo_data_url`, `closing`, `quote`, `sender_name`, `sender_tag`, `theme`, `seal`, `deco`, `sticky`, and `hide_sender`.
+
 ## Available Scripts
 
 | Command | Purpose |
@@ -43,19 +55,21 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. The card st
 ```text
 app/
   components/       Shared navigation, hero, service, and footer components
+  card/[slug]/       Public shared-card route
   create/           Interactive card studio route
+  lib/supabase.js   Supabase client configuration
   globals.css       Global styles and responsive layout rules
   layout.js         Root layout and metadata
   page.js           Home page composition
-public/             Static assets
 ```
 
-The card studio keeps its editable card state in the client and renders the preview from that state. Sharing uses the browser Web Share API when available and copies the card text to the clipboard as a fallback.
+The card studio keeps its editable card state in the client and renders the preview from that state. Sharing saves the card to Supabase, creates a short URL under `/card/[slug]`, and uses the browser Web Share API when available. Other browsers copy the URL to the clipboard.
 
 ## Tech Stack
 
 - [Next.js](https://nextjs.org/) 16 with the App Router
 - [React](https://react.dev/) 19
+- [Supabase](https://supabase.com/) for shared card storage
 - Tailwind CSS 4 through PostCSS
 - ESLint with the Next.js configuration
 
