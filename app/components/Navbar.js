@@ -6,7 +6,6 @@ import Link from "next/link";
 const links = [
   { label: "Home", href: "/" },
   { label: "Service", href: "/#service" },
-  { label: "How it works", href: "/create#studio" },
 ];
 
 function LeafMark() {

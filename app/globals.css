@@ -300,6 +300,144 @@ body {
 .create-card-preview footer { color: var(--ink-soft); font-size: 0.68rem; margin-top: 16px; text-align: right; }
 .create-preview-actions { display: flex; gap: 9px; justify-content: center; margin-top: 16px; }
 
+/* =========================================
+   PUBLIC CARD ENVELOPE ANIMATION
+   ========================================= */
+
+.public-envelope-stage {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+}
+
+.public-envelope-stage:focus-visible {
+  outline: 2px solid var(--accent-deep);
+  outline-offset: 8px;
+  border-radius: 12px;
+}
+
+.public-envelope-stage {
+  perspective: 1200px;
+}
+
+.public-envelope-stage .create-envelope {
+  height: 500px;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+
+.public-envelope-stage .create-env-shape {
+  position: relative;
+  z-index: 5;
+  transform-origin: top center;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
+}
+
+.public-envelope-stage .create-card-preview {
+  opacity: 0;
+  transform: translateY(35px) rotate(-1deg) scale(0.96);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease;
+  z-index: 3;
+}
+
+.public-envelope-stage:not(.is-open) .create-card-preview {
+  pointer-events: none;
+}
+
+.public-envelope-stage.is-open .create-env-shape {
+  transform: rotateX(-125deg) translateY(-20px);
+  opacity: 0.12;
+}
+
+.public-envelope-stage.is-open .create-card-preview {
+  opacity: 1;
+  transform: translateY(-115px) rotate(-1deg) scale(1);
+}
+
+.public-envelope-stage.is-open .create-envelope {
+  transform: translateY(35px);
+}
+
+.public-envelope-stage.is-open .create-env-shape span {
+  opacity: 0;
+  transform: translateX(-50%) scale(0.6);
+}
+
+.public-envelope-stage .create-env-shape span {
+  transition: opacity 0.35s ease, transform 0.5s ease;
+}
+
+.public-card-hint {
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  margin-top: 10px;
+  text-align: center;
+  text-transform: uppercase;
+  transition: opacity 0.3s ease;
+}
+
+.public-envelope-stage.is-open + .public-card-hint {
+  opacity: 0.7;
+}
+
+.public-card-loading {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+}
+
+.public-card-loading-seal {
+  align-items: center;
+  animation: public-card-pulse 1.4s ease-in-out infinite;
+  background: var(--accent-deep);
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  font-size: 1.5rem;
+  height: 60px;
+  justify-content: center;
+  margin: 0 auto 15px;
+  width: 60px;
+}
+
+@keyframes public-card-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@media (max-width: 620px) {
+  .public-envelope-stage .create-envelope {
+    height: 450px;
+  }
+
+  .public-envelope-stage.is-open .create-card-preview {
+    transform: translateY(-90px) rotate(-1deg) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-envelope-stage .create-envelope,
+  .public-envelope-stage .create-env-shape,
+  .public-envelope-stage .create-card-preview,
+  .public-envelope-stage .create-env-shape span {
+    transition: none;
+  }
+}
+
 .public-card-page {
   min-height: calc(100vh - 110px);
   padding: 92px 24px 56px;
@@ -329,11 +467,11 @@ body {
 
 .public-card-stage .create-envelope {
   margin-top: 110px;
-  max-width: 390px;
+  max-width: 450px;
 }
 
 .public-card-preview {
-  width: 94%;
+  width: 100%;
 }
 
 .public-card-actions {
@@ -357,7 +495,10 @@ body {
   .public-card-page { padding: 78px 18px 38px; }
   .public-card-page .create-back-link { left: 18px; top: 18px; }
   .public-card-stage { min-height: 500px; padding-left: 12px; padding-right: 12px; }
-  .public-card-stage .create-envelope { margin-top: 72px; }
+  .public-card-stage .create-envelope {
+    margin-top: 72px;
+    max-width: 390px;
+  }
   .create-back-link { left: 18px; top: 18px; }
   .create-hero { padding-top: 50px; }
   .create-showcase { padding-left: 18px; padding-right: 18px; }
@@ -379,6 +520,34 @@ body::before {
   pointer-events: none;
   position: fixed;
   z-index: -1;
+}
+
+.public-card-not-found {
+  max-width: 420px;
+  padding: 40px 25px;
+  text-align: center;
+}
+
+.public-card-not-found-icon {
+  align-items: center;
+  background: var(--accent-deep);
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  font-size: 24px;
+  height: 70px;
+  justify-content: center;
+  margin: 0 auto 20px;
+  width: 70px;
+}
+
+.public-card-not-found h1 {
+  margin-bottom: 10px;
+}
+
+.public-card-not-found p {
+  color: var(--ink-soft);
+  margin-bottom: 25px;
 }
 
 .navbar {
@@ -1147,6 +1316,7 @@ body::before {
   transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
   width: 38px;
 }
+
 
 .service-card:hover .service-icon {
   background: var(--accent-deep);
