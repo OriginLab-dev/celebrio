@@ -208,6 +208,12 @@ export default function CardPage() {
             : "Click the envelope to open"}
         </p>
 
+        <div className="public-card-actions">
+          <Link className="create-btn" href="/create">
+            Create your own card
+          </Link>
+        </div>
+
       </section>
     </main>
   );
