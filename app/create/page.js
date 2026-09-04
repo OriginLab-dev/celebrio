@@ -4,6 +4,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Footer from "../components/Footer";
+import { supabase } from "../lib/supabase";
 
 const occasions = [
   { key: "teacher", icon: "✉", name: "Thank You (Teacher)", desc: "For teachers & mentors", tag: "Thank You", theme: "sand", salutation: "Dear Sir", relationship: "Teacher", heading: "Our guide and constant inspiration", message: "Thank you for making every lesson simple, interesting and fun. Your patience, support and passion for teaching inspire us to keep growing.", closing: "Happy Teachers' Day!", quote: "A teacher who keeps learning keeps inspiring." },
@@ -30,11 +31,55 @@ export default function CreatePage() {
   const occasion = useMemo(() => occasions.find((item) => item.key === state.occasion) || occasions[0], [state.occasion]);
   const update = (key, value) => setState((current) => ({ ...current, [key]: value }));
   const selectOccasion = (item) => setState((current) => ({ ...current, occasion: item.key, salutation: item.salutation, relationship: item.relationship, heading: item.heading, message: item.message, closing: item.closing, quote: item.quote, theme: item.theme }));
-  const shareText = `${state.salutation || "Dear"} ${state.recipientName || "Friend"},\n\n${state.message}\n\n${state.closing}`;
 
   async function shareCard() {
-    if (navigator.share) await navigator.share({ title: "A card for you", text: shareText });
-    else await navigator.clipboard?.writeText(shareText);
+    try {
+      const slug = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
+
+      const { error } = await supabase
+        .from("cards")
+        .insert({
+          slug,
+          occasion: state.occasion,
+          recipient_name: state.recipientName,
+          salutation: state.salutation,
+          relationship: state.relationship,
+          heading: state.heading,
+          message: state.message,
+          photo_data_url: state.photoDataUrl,
+          closing: state.closing,
+          quote: state.quote,
+          sender_name: state.senderName,
+          sender_tag: state.senderTag,
+          theme: state.theme,
+          seal: state.seal,
+          deco: state.deco,
+          sticky: state.sticky,
+          hide_sender: state.hideSender,
+        });
+
+      if (error) {
+        console.error("Supabase error:", error);
+        alert("Could not save your card. Please try again.");
+        return;
+      }
+
+      const cardUrl = `${window.location.origin}/card/${slug}`;
+
+      if (navigator.share) {
+        await navigator.share({
+          title: "A card for you 💌",
+          text: "Someone created a special card for you.",
+          url: cardUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(cardUrl);
+        alert("Card saved! Share link copied.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong.");
+    }
   }
 
 
